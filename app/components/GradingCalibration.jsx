@@ -1,10 +1,12 @@
 "use client";
 
-import { AlertCircle, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { AlertCircle, Check, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { useRef, useState } from "react";
 import DistributionSettings from './DistributionSettings';
+import { useTextAnalysis } from '../hooks/useTextAnalysis';
 
 const GradingCalibration = () => {
+  const { analyzeText, isAnalyzing, error: analysisError } = useTextAnalysis();
   const [assignments] = useState([
     {
       id: 1,
@@ -74,12 +76,7 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showDistributionSettings, setShowDistributionSettings] = useState(false);
   const [highlights, setHighlights] = useState({
-    1: [
-      { criterionId: "evaporation", start: 93, end: 230 },
-      { criterionId: "condensation", start: 262, end: 423 },
-      { criterionId: "precipitation", start: 456, end: 612 },
-      { criterionId: "importance", start: 614, end: 828 },
-    ],
+    1: [],
     2: [],
     3: [],
   });
@@ -252,6 +249,35 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
     }
   };
 
+  const handleAIAnalysis = async () => {
+    const currentAssignment = assignments[currentIndex];
+    
+    const result = await analyzeText(
+      currentAssignment.content,
+      criteria,
+      currentAssignment.question
+    );
+
+    if (result) {
+      // Update highlights with AI suggestions
+      setHighlights((prev) => ({
+        ...prev,
+        [currentAssignment.id]: result.highlights,
+      }));
+
+      // Update grades with AI suggestions
+      if (result.suggestedGrades) {
+        setGrades((prev) => ({
+          ...prev,
+          [currentAssignment.id]: {
+            ...prev[currentAssignment.id],
+            ...result.suggestedGrades,
+          },
+        }));
+      }
+    }
+  };
+
   const handleFinish = () => {
     console.log("Calibration complete!", { grades, highlights });
     setShowDistributionSettings(true);
@@ -314,17 +340,33 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
               <h2 className="text-xl font-bold text-gray-800">
                 Student Submission
               </h2>
-              {isSelecting && (
-                <div className="flex items-center gap-2 text-sm text-blue-600">
-                  <AlertCircle size={16} />
-                  Highlight text mode active
-                </div>
-              )}
+              <div className="flex items-center gap-3">
+                {isSelecting && (
+                  <div className="flex items-center gap-2 text-sm text-blue-600">
+                    <AlertCircle size={16} />
+                    Highlight text mode active
+                  </div>
+                )}
+                <button
+                  onClick={handleAIAnalysis}
+                  disabled={isAnalyzing}
+                  className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                >
+                  <Sparkles size={16} />
+                  {isAnalyzing ? "Analyzing..." : "AI Auto-Highlight"}
+                </button>
+              </div>
             </div>
             <p className="text-sm text-gray-500">
               {currentAssignment.studentName} • Submitted{" "}
               {currentAssignment.submittedDate}
             </p>
+            {analysisError && (
+              <div className="mt-2 text-sm text-red-600 flex items-center gap-2">
+                <AlertCircle size={14} />
+                {analysisError}
+              </div>
+            )}
           </div>
 
           <div
