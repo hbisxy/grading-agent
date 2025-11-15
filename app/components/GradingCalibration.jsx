@@ -2,6 +2,7 @@
 
 import { AlertCircle, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";
+import DistributionSettings from './DistributionSettings';
 
 const GradingCalibration = () => {
   const [assignments] = useState([
@@ -71,6 +72,7 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
   ]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showDistributionSettings, setShowDistributionSettings] = useState(false);
   const [highlights, setHighlights] = useState({
     1: [
       { criterionId: "evaporation", start: 93, end: 230 },
@@ -252,13 +254,34 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
 
   const handleFinish = () => {
     console.log("Calibration complete!", { grades, highlights });
-    alert("Calibration complete! Ready to train AI on remaining assignments.");
+    setShowDistributionSettings(true);
+  };
+
+  const handleDistributionComplete = (settings) => {
+    console.log("Distribution settings complete!", settings);
+    alert("AI grading setup complete! Ready to grade remaining assignments.");
+    // Here you would typically trigger the AI grading process
   };
 
   const currentAssignment = assignments[currentIndex];
   const currentGrades = grades[currentAssignment.id];
   const completedCount = getCompletedCount();
   const coverageStatus = getCriterionCoverage(currentAssignment.id);
+
+  // Show distribution settings after finishing calibration
+  if (showDistributionSettings) {
+    const calibrationData = {
+      grades,
+      highlights,
+      assignments: assignments.map(a => ({
+        id: a.id,
+        studentName: a.studentName,
+        totalScore: totalScores[a.id]
+      }))
+    };
+    
+    return <DistributionSettings calibrationData={calibrationData} onComplete={handleDistributionComplete} />;
+  }
 
   return (
     <div className="flex h-screen bg-gray-50">
