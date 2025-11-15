@@ -1,6 +1,6 @@
 /**
  * AI Configuration for Text Analysis
- * 
+ *
  * Customize these settings to adjust AI behavior
  */
 
@@ -29,7 +29,8 @@ export const AI_CONFIG = {
   // Grade quality definitions
   gradeDefinitions: {
     Good: "Criterion is well addressed with clear, accurate, and complete information",
-    Average: "Criterion is addressed but lacks depth, detail, or has minor issues",
+    Average:
+      "Criterion is addressed but lacks depth, detail, or has minor issues",
     Weak: "Criterion is barely addressed, missing key information, or contains significant errors",
   },
 

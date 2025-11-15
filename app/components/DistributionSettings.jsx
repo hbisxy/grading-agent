@@ -1,7 +1,7 @@
-import { useState } from "react";
-// import DistributionSettings from './DistributionSettings';
+"use client";
 
-// Temporary inline version - move to separate file in production
+import { useState } from "react";
+
 const DistributionSettings = ({ calibrationData, onComplete }) => {
   const [average, setAverage] = useState("");
   const [standardDeviation, setStandardDeviation] = useState("");

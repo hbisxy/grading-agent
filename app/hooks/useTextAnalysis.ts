@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface Criterion {
   id: string;
@@ -30,10 +30,10 @@ export const useTextAnalysis = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/analyze-text', {
-        method: 'POST',
+      const response = await fetch("/api/analyze-text", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           content,
@@ -44,15 +44,16 @@ export const useTextAnalysis = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to analyze text');
+        throw new Error(errorData.error || "Failed to analyze text");
       }
 
       const data = await response.json();
       return data;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      const errorMessage =
+        err instanceof Error ? err.message : "Unknown error occurred";
       setError(errorMessage);
-      console.error('Error analyzing text:', err);
+      console.error("Error analyzing text:", err);
       return null;
     } finally {
       setIsAnalyzing(false);

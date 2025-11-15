@@ -65,6 +65,7 @@
 ## Data Flow
 
 ### Request Structure
+
 ```typescript
 {
   content: "Student's essay text...",
@@ -80,6 +81,7 @@
 ```
 
 ### AI Response Structure
+
 ```json
 {
   "highlights": [
@@ -97,6 +99,7 @@
 ```
 
 ### Processed Response
+
 ```typescript
 {
   highlights: [
@@ -116,11 +119,13 @@
 ## Key Components
 
 ### 1. Frontend Hook (`useTextAnalysis.ts`)
+
 - **Purpose**: Abstracts API communication
 - **Manages**: Loading state, error handling
 - **Returns**: Analysis function and state
 
 ### 2. API Route (`/api/analyze-text/route.ts`)
+
 - **Purpose**: Backend logic for AI analysis
 - **Tasks**:
   - Validates input
@@ -130,6 +135,7 @@
   - Returns formatted data
 
 ### 3. Configuration (`ai-config.ts`)
+
 - **Purpose**: Centralized AI settings
 - **Contains**:
   - Model selection

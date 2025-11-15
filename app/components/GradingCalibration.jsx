@@ -1,9 +1,15 @@
 "use client";
 
-import { AlertCircle, Check, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+} from "lucide-react";
 import { useRef, useState } from "react";
-import DistributionSettings from './DistributionSettings';
-import { useTextAnalysis } from '../hooks/useTextAnalysis';
+import { useTextAnalysis } from "../hooks/useTextAnalysis";
+import DistributionSettings from "./DistributionSettings";
 
 const GradingCalibration = () => {
   const { analyzeText, isAnalyzing, error: analysisError } = useTextAnalysis();
@@ -74,7 +80,8 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
   ]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showDistributionSettings, setShowDistributionSettings] = useState(false);
+  const [showDistributionSettings, setShowDistributionSettings] =
+    useState(false);
   const [highlights, setHighlights] = useState({
     1: [],
     2: [],
@@ -251,7 +258,7 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
 
   const handleAIAnalysis = async () => {
     const currentAssignment = assignments[currentIndex];
-    
+
     const result = await analyzeText(
       currentAssignment.content,
       criteria,
@@ -265,6 +272,7 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
         [currentAssignment.id]: result.highlights,
       }));
 
+      // TODO - REMOVE FOR PRODUCTION. USED IN TESTING ONLY.
       // Update grades with AI suggestions
       if (result.suggestedGrades) {
         setGrades((prev) => ({
@@ -299,14 +307,19 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
     const calibrationData = {
       grades,
       highlights,
-      assignments: assignments.map(a => ({
+      assignments: assignments.map((a) => ({
         id: a.id,
         studentName: a.studentName,
-        totalScore: totalScores[a.id]
-      }))
+        totalScore: totalScores[a.id],
+      })),
     };
-    
-    return <DistributionSettings calibrationData={calibrationData} onComplete={handleDistributionComplete} />;
+
+    return (
+      <DistributionSettings
+        calibrationData={calibrationData}
+        onComplete={handleDistributionComplete}
+      />
+    );
   }
 
   return (
@@ -463,20 +476,6 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
                     </div>
                   )}
                 </div>
-
-                <button
-                  onClick={() => {
-                    setSelectedCriterion(isSelected ? null : criterion.id);
-                    setIsSelecting(!isSelected);
-                  }}
-                  className={`w-full mb-3 py-2 px-3 rounded-lg text-sm font-medium transition-all ${
-                    isSelected
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-900 hover:bg-gray-200"
-                  }`}
-                >
-                  {isSelected ? "Highlighting..." : "Highlight Text"}
-                </button>
 
                 <div className="flex gap-2">
                   {gradeOptions.map((option) => (

@@ -5,16 +5,19 @@ An AI-powered grading assistant that helps educators efficiently grade student e
 ## Features
 
 ✨ **AI-Powered Text Analysis**
+
 - Automatic highlighting of text segments matching grading criteria
 - Intelligent grade suggestions (Weak/Average/Good)
 - Uses GPT-4 for accurate content analysis
 
 📝 **Manual Grading Calibration**
+
 - Interactive interface for grading sample assignments
 - Criterion-based assessment with color-coded highlights
 - Manual text selection and grading for fine-tuning
 
 📊 **Distribution Settings**
+
 - Configure target grade distributions
 - Set minimum scores and additional instructions
 - Prepare AI for batch grading of remaining assignments
@@ -32,6 +35,7 @@ npm install
 See [AI_SETUP.md](./AI_SETUP.md) for detailed instructions.
 
 Quick setup:
+
 ```bash
 # Copy example env file
 cp .env.local.example .env.local
@@ -79,17 +83,20 @@ grading-agent/
 ## How It Works
 
 ### 1. Calibration Phase
+
 - Educators grade a small sample (e.g., 3 assignments)
 - Highlight text matching each criterion
 - Assign grades (Weak/Average/Good)
 - Use AI Auto-Highlight for suggestions
 
 ### 2. Distribution Configuration
+
 - Set target average and standard deviation
 - Define minimum acceptable scores
 - Add custom grading instructions
 
 ### 3. AI Training (Future)
+
 - AI learns from calibration examples
 - Applies learned patterns to remaining assignments
 - Maintains consistency with manual grading
@@ -101,6 +108,7 @@ grading-agent/
 Analyzes student text and identifies criterion matches.
 
 **Request:**
+
 ```json
 {
   "content": "Student essay text...",
@@ -116,6 +124,7 @@ Analyzes student text and identifies criterion matches.
 ```
 
 **Response:**
+
 ```json
 {
   "highlights": [
@@ -134,6 +143,7 @@ Analyzes student text and identifies criterion matches.
 ## Testing
 
 Test the AI analysis endpoint:
+
 ```bash
 node scripts/test-ai-analysis.js
 ```

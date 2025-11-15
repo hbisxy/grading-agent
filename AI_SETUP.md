@@ -3,6 +3,7 @@
 ## Overview
 
 The grading agent now includes AI-powered text highlighting that automatically:
+
 - Identifies text segments matching grading criteria
 - Suggests grades (Weak/Average/Good) for each criterion
 - Uses GPT-4 for intelligent analysis
@@ -19,11 +20,13 @@ The grading agent now includes AI-powered text highlighting that automatically:
 ### 2. Configure Environment Variables
 
 1. Create a `.env.local` file in the project root:
+
    ```bash
    cp .env.local.example .env.local
    ```
 
 2. Add your OpenAI API key:
+
    ```
    OPENAI_API_KEY=sk-your-actual-api-key-here
    ```
@@ -49,6 +52,7 @@ Once configured, you'll see an "AI Auto-Highlight" button in the grading interfa
 ### Backend (`/app/api/analyze-text/route.ts`)
 
 The API endpoint:
+
 1. Receives the student's text, grading criteria, and question
 2. Constructs a detailed prompt for GPT-4
 3. Asks the AI to identify exact text segments for each criterion
@@ -57,11 +61,13 @@ The API endpoint:
 ### Frontend Integration
 
 **Hook** (`/app/hooks/useTextAnalysis.ts`):
+
 - Provides `analyzeText()` function
 - Manages loading state
 - Handles errors
 
 **Component** (`GradingCalibration.jsx`):
+
 - Triggers analysis on button click
 - Updates highlights state with AI results
 - Applies suggested grades to the UI
@@ -69,12 +75,14 @@ The API endpoint:
 ## Cost Considerations
 
 Using GPT-4o (recommended):
+
 - ~$0.005 per analysis (approximately)
 - For 100 assignments: ~$0.50
 
 To reduce costs, you can switch to `gpt-3.5-turbo` in the API route:
+
 ```typescript
-model: "gpt-3.5-turbo"  // Change from "gpt-4o"
+model: "gpt-3.5-turbo"; // Change from "gpt-4o"
 ```
 
 ## Customization
@@ -82,6 +90,7 @@ model: "gpt-3.5-turbo"  // Change from "gpt-4o"
 ### Adjust AI Temperature
 
 In `/app/api/analyze-text/route.ts`, modify the temperature parameter:
+
 ```typescript
 temperature: 0.3,  // Lower = more consistent, Higher = more creative
 ```
@@ -89,6 +98,7 @@ temperature: 0.3,  // Lower = more consistent, Higher = more creative
 ### Change AI Model
 
 Choose from:
+
 - `gpt-4o` - Latest, most capable (recommended)
 - `gpt-4-turbo` - Fast and capable
 - `gpt-3.5-turbo` - Most cost-effective
@@ -100,15 +110,18 @@ Edit the `buildAnalysisPrompt()` function to adjust how the AI analyzes text.
 ## Troubleshooting
 
 ### "OpenAI API key not configured" Error
+
 - Ensure `.env.local` exists with `OPENAI_API_KEY`
 - Restart the dev server after adding the key
 
 ### "Failed to analyze text with AI" Error
+
 - Check your OpenAI API key is valid
 - Verify you have API credits/billing set up
 - Check the browser console for detailed error messages
 
 ### Highlights Not Appearing
+
 - The AI tries to find exact text matches
 - If fuzzy matching fails, manually highlight the text
 - Check the console for processing warnings
@@ -116,6 +129,7 @@ Edit the `buildAnalysisPrompt()` function to adjust how the AI analyzes text.
 ## Future Enhancements
 
 Potential improvements:
+
 - Batch analysis for multiple assignments
 - Fine-tuned models for specific subjects
 - Confidence scores for each highlight
