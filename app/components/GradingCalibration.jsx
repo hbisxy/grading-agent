@@ -203,6 +203,23 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
     return <p className="whitespace-pre-wrap leading-relaxed">{parts}</p>;
   };
 
+  const [totalScores, setTotalScores] = useState(
+    assignments.reduce((acc, assignment) => {
+      acc[assignment.id] = "";
+      return acc;
+    }, {})
+  );
+
+  // Add this handler
+  const handleTotalScoreChange = (value) => {
+    const numValue =
+      value === "" ? "" : Math.min(10, Math.max(0, parseFloat(value) || 0));
+    setTotalScores((prev) => ({
+      ...prev,
+      [assignments[currentIndex].id]: numValue,
+    }));
+  };
+
   const isAssignmentComplete = () => {
     const currentGrades = grades[assignments[currentIndex].id];
     return criteria.every((criterion) => currentGrades[criterion.id] !== null);
@@ -317,7 +334,7 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
               className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Check size={20} />
-              Finish Calibration
+              Finish Manual Grading
             </button>
           ) : (
             <button
@@ -429,34 +446,58 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
           </div>
         )}
 
-        <div className="p-6 border-t border-gray-200">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-900">
-              Total Score
-            </span>
-            <span className="text-lg font-bold text-green-600">
-              {Math.round(
-                (Object.values(currentGrades).filter((g) => g !== null).length /
-                  criteria.length) *
-                  100
-              )}
-              %
-            </span>
+        <>
+          <div className="p-6 border-t border-gray-200 space-y-4">
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">
+                  Completion
+                </span>
+                <span className="text-lg font-bold text-green-600">
+                  {Math.round(
+                    (Object.values(currentGrades).filter((g) => g !== null)
+                      .length /
+                      criteria.length) *
+                      100
+                  )}
+                  %
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-green-500 h-2 rounded-full transition-all"
+                  style={{
+                    width: `${
+                      (Object.values(currentGrades).filter((g) => g !== null)
+                        .length /
+                        criteria.length) *
+                      100
+                    }%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-900 mb-2">
+                Total Score
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="0.5"
+                  value={totalScores[currentAssignment.id]}
+                  onChange={(e) => handleTotalScoreChange(e.target.value)}
+                  className="text-gray-900 flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-lg font-semibold"
+                  placeholder="0"
+                />
+                <span className="text-gray-900 font-medium">/ 10</span>
+              </div>
+            </div>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-green-500 h-2 rounded-full transition-all"
-              style={{
-                width: `${
-                  (Object.values(currentGrades).filter((g) => g !== null)
-                    .length /
-                    criteria.length) *
-                  100
-                }%`,
-              }}
-            ></div>
-          </div>
-        </div>
+        </>
       </div>
     </div>
   );
