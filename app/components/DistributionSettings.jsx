@@ -23,7 +23,11 @@ const DistributionSettings = ({ calibrationData, onComplete }) => {
       },
       minimumScore: minimumScore ? parseFloat(minimumScore) : null,
       additionalInstructions,
-      calibrationData,
+      calibrationData: {
+        gradedAssignments: calibrationData.assignments, // Pass the manually graded examples with their scores
+        remainingAssignments: calibrationData.remainingAssignments, // Use the actual remaining assignments
+        criteria: calibrationData.criteria,
+      },
     };
 
     console.log("Distribution settings:", settings);

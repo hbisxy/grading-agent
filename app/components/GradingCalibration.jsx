@@ -9,52 +9,18 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTextAnalysis } from "../hooks/useTextAnalysis";
+import AIGrading from "./AIGrading";
 import DistributionSettings from "./DistributionSettings";
+import { ALL_ASSIGNMENTS, CALIBRATION_COUNT } from "../data/DATA";
 
 const GradingCalibration = () => {
   const { analyzeText, isAnalyzing, error: analysisError } = useTextAnalysis();
-  const [assignments] = useState([
-    {
-      id: 1,
-      studentName: "John Smith",
-      submittedDate: "Nov 15, 2025",
-      question:
-        "Explain the water cycle and its importance to Earth's ecosystems.",
-      content: `The water cycle is a continuous process that circulates water throughout Earth's systems. Water evaporates from oceans, lakes, and rivers due to heat from the sun, turning from liquid into water vapor. This process is essential for distributing water across the planet.
-
-As the water vapor rises into the atmosphere, it cools and condenses into clouds through a process called condensation. The clouds can travel great distances, carrying moisture to different regions.
-
-Eventually, the water returns to Earth's surface. Precipitation occurs when water falls from clouds as rain, snow, sleet, or hail. This water then collects in bodies of water or soaks into the ground.
-
-The water cycle is crucial for ecosystems because it provides fresh water for plants and animals, regulates temperature, and transports nutrients throughout the environment. Without this cycle, life on Earth would not be sustainable.
-
-In conclusion, the water cycle demonstrates the interconnected nature of Earth's systems and highlights the importance of water conservation for maintaining healthy ecosystems.`,
-    },
-    {
-      id: 2,
-      studentName: "Sarah Johnson",
-      submittedDate: "Nov 15, 2025",
-      question:
-        "Explain the water cycle and its importance to Earth's ecosystems.",
-      content: `Water moves around our planet in what scientists call the water cycle. The sun heats up water in oceans and lakes, making it evaporate into the air as invisible water vapor.
-
-When this water vapor gets high enough in the sky, it gets cold and turns back into tiny water droplets. These droplets stick together to form clouds. This is called condensation.
-
-When the clouds get too heavy with water, the water falls back down as rain or snow. This is precipitation. The water either flows into rivers and streams or soaks into the ground.
-
-This cycle is really important for all living things. Plants need water to grow, and animals need it to drink. The water cycle also helps move nutrients around and keeps the Earth's temperature balanced.
-
-Without the water cycle, there wouldn't be any fresh water available, and life as we know it couldn't exist.`,
-    },
-    {
-      id: 3,
-      studentName: "Michael Chen",
-      submittedDate: "Nov 15, 2025",
-      question:
-        "Explain the water cycle and its importance to Earth's ecosystems.",
-      content: `The water cycle represents one of Earth's most fundamental processes...`,
-    },
-  ]);
+  const [showAIGrading, setShowAIGrading] = useState(false);
+  const [aiGradingData, setAIGradingData] = useState(null);
+  
+  // Split assignments: first 3 for calibration, rest for AI grading
+  const [assignments] = useState(ALL_ASSIGNMENTS.slice(0, CALIBRATION_COUNT));
+  const [remainingAssignments] = useState(ALL_ASSIGNMENTS.slice(CALIBRATION_COUNT));
 
   const [criteria] = useState([
     {
@@ -266,7 +232,7 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
     );
 
     if (result) {
-      // Update highlights with AI suggestions
+      // Update highlights with AI suggestions (only highlighting, no grading)
       setHighlights((prev) => ({
         ...prev,
         [currentAssignment.id]: result.highlights,
@@ -293,8 +259,10 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
 
   const handleDistributionComplete = (settings) => {
     console.log("Distribution settings complete!", settings);
-    alert("AI grading setup complete! Ready to grade remaining assignments.");
+    // alert("AI grading setup complete! Ready to grade remaining assignments.");
     // Here you would typically trigger the AI grading process
+    setAIGradingData(settings.calibrationData);
+    setShowAIGrading(true);
   };
 
   const currentAssignment = assignments[currentIndex];
@@ -302,16 +270,32 @@ Without the water cycle, there wouldn't be any fresh water available, and life a
   const completedCount = getCompletedCount();
   const coverageStatus = getCriterionCoverage(currentAssignment.id);
 
+  if (showAIGrading) {
+    return (
+      <AIGrading
+        calibrationData={aiGradingData}
+        onComplete={(results) => {
+          console.log("AI grading complete:", results);
+          // Handle completion - show results page
+        }}
+      />
+    );
+  }
+
   // Show distribution settings after finishing calibration
   if (showDistributionSettings) {
     const calibrationData = {
       grades,
       highlights,
+      criteria,
       assignments: assignments.map((a) => ({
         id: a.id,
         studentName: a.studentName,
         totalScore: totalScores[a.id],
+        question: a.question,
+        content: a.content,
       })),
+      remainingAssignments, // Add the remaining assignments for AI grading
     };
 
     return (
